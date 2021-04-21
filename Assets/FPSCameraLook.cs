@@ -47,7 +47,10 @@ public class FPSCameraLook : MonoBehaviour
     {
         if (_isRuning)
         {
-            transform.localPosition = new Vector3(Mathf.Clamp((originalPos.x + (Mathf.Sin(Time.time * _frequency) * _magnitude)), originalPos.x - 0.1f, originalPos.x + 0.1f), Mathf.Clamp((originalPos.y + (Mathf.Sin(Time.time * _frequency) * _magnitude)), originalPos.y, originalPos.y + 0.2f), transform.localPosition.z);
+            if(_frequency != 0 && _magnitude != 0)
+            {
+                transform.localPosition = new Vector3(Mathf.Clamp((originalPos.x + (Mathf.Sin(Time.time * _frequency) * _magnitude)), originalPos.x - 0.1f, originalPos.x + 0.1f), Mathf.Clamp((originalPos.y + (Mathf.Sin(Time.time * _frequency) * _magnitude)), originalPos.y, originalPos.y + 0.2f), transform.localPosition.z);
+            }
         }
     }
 }
