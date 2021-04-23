@@ -32,8 +32,6 @@ public class CharacterFPSController : MonoBehaviour
     public      float       _sprintFOV = 70f;
     public      float       _zoomFOV = 10f;
     public      float        _originalLife;
-    private     float       axisX;
-    private     float       axisZ;
     private     float       originalHeight;
     private     float       movementSpeedRegister;
     #endregion
@@ -68,7 +66,9 @@ public class CharacterFPSController : MonoBehaviour
     public      string      _zoomInput = "Zoom";
     #endregion
 
-    public ForceMode _jumpForceMode = ForceMode.Impulse;
+    public      ForceMode       _jumpForceMode = ForceMode.Impulse;
+
+    private     Vector3         inputVec;
 
     #endregion
 
@@ -110,17 +110,20 @@ public class CharacterFPSController : MonoBehaviour
     #region Basic Actions
     private void Move()
     {
-        axisX = Input.GetAxis(_axisXInput);
-        axisZ = Input.GetAxis(_axisZInput);
+        this.inputVec.x = Input.GetAxis(_axisXInput);
+        this.inputVec.y = _rb.velocity.y;
+        this.inputVec.z = Input.GetAxis(_axisZInput);
 
-        Vector2 inputVec = new Vector2(axisX, axisZ);
-        inputVec.Normalize();
-
-        Vector3 movePos = (transform.forward * inputVec.y + transform.right * inputVec.x) * _movementSpeed * Time.deltaTime;
-
-        if((axisZ != 0 || axisX != 0) && !stop && _canWalk)
+        if(inputVec.sqrMagnitude > 1)
         {
-            _rb.velocity = movePos;
+            inputVec.Normalize();
+        }
+
+        inputVec *= _movementSpeed * Time.deltaTime;
+
+        if((inputVec.x != 0f || inputVec.z != 0f) && !stop && _canWalk)
+        {
+            _rb.velocity = inputVec;
         }
     }
 
@@ -155,7 +158,7 @@ public class CharacterFPSController : MonoBehaviour
     {
         if (_canSprint)
         {
-            if(Input.GetButton(_sprintInput) && !isZoom && axisZ != 0)
+            if(Input.GetButton(_sprintInput) && !isZoom && inputVec.z != 0f)
             {
                 if (!isSprint)
                 {
