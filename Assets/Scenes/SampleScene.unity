@@ -279,25 +279,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _life: 100
-  _movementSpeed: 500
+  _movementSpeed: 200
   _jumpForce: 500
   _height: 2
   _sprintMultiply: 2
-  _sprintFrequency: 50
-  _sprintMagnitude: 1
+  _sprintFrequency: 0
+  _sprintMagnitude: 0
   _ZoomPenalized: 75
   _cameraSensitive: 100
   _cameraNegativeAngle: -90
   _cameraPositiveAngle: 90
   _walkFOV: 60
-  _sprintFOV: 88.9
+  _sprintFOV: 70
   _zoomFOV: 10
   _originalLife: 0
   _countToCanJump: 2
   _canWalk: 1
   _multipleJumps: 0
   _canJump: 1
-  _canSprint: 1
+  _canSprint: 0
   _canZoom: 0
   _stopWalkingInTheZoom: 0
   _penalizedWalkingSpeedInTheZoom: 0

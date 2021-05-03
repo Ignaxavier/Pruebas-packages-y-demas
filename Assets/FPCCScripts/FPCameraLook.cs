@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
-public class FPSCameraLook : MonoBehaviour
+public class FPCameraLook : MonoBehaviour
 {
     public      float       _mouseSensitive;
     public      float       _negativeAngle = -90f;
@@ -15,14 +15,14 @@ public class FPSCameraLook : MonoBehaviour
 
     private     float       mouseX;
     private     float       mouseY;
-    private CharacterFPSController FPSC;
+    private CharacterFPController FPSC;
     private     float       xRotation;
     Vector3 originalPos;
 
 
     private void Awake()
     {
-        FPSC = GetComponentInParent<CharacterFPSController>();
+        FPSC = GetComponentInParent<CharacterFPController>();
         _frequency = FPSC._sprintFrequency;
         _magnitude = FPSC._sprintMagnitude;
         originalPos = transform.localPosition;

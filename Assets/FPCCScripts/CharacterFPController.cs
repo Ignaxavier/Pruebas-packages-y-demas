@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider), typeof(BoxCollider))]
-public class CharacterFPSController : MonoBehaviour
+public class CharacterFPController : MonoBehaviour
 {
     #region Variable
 
@@ -12,7 +12,7 @@ public class CharacterFPSController : MonoBehaviour
     CapsuleCollider _col;
     BoxCollider _groundCol;
     Camera _cam;
-    FPSCameraLook _camLook;
+    FPCameraLook _camLook;
     #endregion
 
     #region Float
@@ -79,7 +79,7 @@ public class CharacterFPSController : MonoBehaviour
         _col = GetComponent<CapsuleCollider>();
         _groundCol = GetComponent<BoxCollider>();
         _cam = GetComponentInChildren<Camera>();
-        _camLook = GetComponentInChildren<FPSCameraLook>();
+        _camLook = GetComponentInChildren<FPCameraLook>();
         #endregion
 
         _cam.fieldOfView = _walkFOV;
@@ -110,16 +110,13 @@ public class CharacterFPSController : MonoBehaviour
     #region Basic Actions
     private void Move()
     {
-        this.inputVec.x = Input.GetAxis(_axisXInput);
-        this.inputVec.y = _rb.velocity.y;
-        this.inputVec.z = Input.GetAxis(_axisZInput);
+        inputVec = (transform.forward * Input.GetAxis(_axisZInput) + transform.right * Input.GetAxis(_axisXInput)) * _movementSpeed * Time.deltaTime;
 
-        if(inputVec.sqrMagnitude > 1)
+        this.inputVec.y = _rb.velocity.y;
+        /*if(inputVec.sqrMagnitude > 1)
         {
             inputVec.Normalize();
-        }
-
-        inputVec *= _movementSpeed * Time.deltaTime;
+        }*/
 
         if((inputVec.x != 0f || inputVec.z != 0f) && !stop && _canWalk)
         {

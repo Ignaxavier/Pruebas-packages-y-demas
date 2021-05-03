@@ -3,10 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(CharacterFPSController))]
-public class FPSCCEditor : Editor
+[CustomEditor(typeof(CharacterFPController))]
+public class FPCCEditor : Editor
 {
-    CharacterFPSController _FPSCC;
+    CharacterFPController _FPSCC;
+
+    #region Textures
+    Texture2D titleBanner;
+    Texture2D basicActionsBanner;
+    Texture2D cameraSettingsBanner;
+    Texture2D scaleCharacterBanner;
+    Texture2D inputsBanner;
+    #endregion
+
+    #region Bools
     bool basicActions;
     bool walk;
     bool jump;
@@ -18,21 +28,32 @@ public class FPSCCEditor : Editor
     bool cameraSettings;
     bool characterScale;
     bool sprintShakeIntensity;
+    #endregion
 
     private void OnEnable()
     {
-        _FPSCC = (CharacterFPSController)target;
+        _FPSCC = (CharacterFPController)target;
+
+        titleBanner = Resources.Load<Texture2D>("FPCC/FPCharacterController");
+        basicActionsBanner = Resources.Load<Texture2D>("FPCC/BasicActions");
+        cameraSettingsBanner = Resources.Load<Texture2D>("FPCC/CameraSettings");
+        scaleCharacterBanner = Resources.Load<Texture2D>("FPCC/ScaleoftheCharacter");
+        inputsBanner = Resources.Load<Texture2D>("FPCC/ShowInputs");
     }
 
     public override void OnInspectorGUI()
     {
         //base.OnInspectorGUI();
 
+        EditorGUILayout.Space();
+        GUI.DrawTexture(GUILayoutUtility.GetRect(20, 60), titleBanner, ScaleMode.ScaleToFit);
+
         EditorGUILayout.LabelField("By Ignacio Settembrini", EditorStyles.boldLabel);
         EditorGUILayout.Space();
         _FPSCC._life = EditorGUILayout.FloatField("Life", _FPSCC._life);
         EditorGUI.ProgressBar(GUILayoutUtility.GetRect(15, 15), _FPSCC._life / _FPSCC._originalLife, "Life " + _FPSCC._life);
 
+        EditorGUILayout.Space();
         BasicActions();
         Separator();
         CameraSettings();
@@ -40,6 +61,7 @@ public class FPSCCEditor : Editor
         CharacterScale();
         Separator();
         ShowInputs();
+
     }
 
     private void Separator()
@@ -51,8 +73,10 @@ public class FPSCCEditor : Editor
 
     #region Basic Actions
     private void BasicActions()
-    {
-        basicActions = EditorGUILayout.Foldout(basicActions, "Basic Actions");
+    {    
+        GUI.DrawTexture(GUILayoutUtility.GetRect(15, 50), basicActionsBanner, ScaleMode.ScaleToFit);
+        
+        basicActions = EditorGUILayout.Foldout(basicActions, "");
 
         if (basicActions)
         {
@@ -177,7 +201,9 @@ public class FPSCCEditor : Editor
 
     private void CharacterScale()
     {
-        characterScale = EditorGUILayout.Foldout(characterScale, "Scale of the Character");
+        GUI.DrawTexture(GUILayoutUtility.GetRect(15, 50), scaleCharacterBanner, ScaleMode.ScaleToFit);
+            
+        characterScale = EditorGUILayout.Foldout(characterScale, "");
 
         if (characterScale)
         {
@@ -187,7 +213,10 @@ public class FPSCCEditor : Editor
 
     private void CameraSettings()
     {
-        cameraSettings = EditorGUILayout.Foldout(cameraSettings, "Camera Settings");
+            
+        GUI.DrawTexture(GUILayoutUtility.GetRect(15, 50), cameraSettingsBanner, ScaleMode.ScaleToFit);
+        
+        cameraSettings = EditorGUILayout.Foldout(cameraSettings, "");
 
         if (cameraSettings)
         {
@@ -201,8 +230,10 @@ public class FPSCCEditor : Editor
     }
 
     private void ShowInputs()
-    {
-        inputs = EditorGUILayout.Foldout(inputs, "Show Inputs");
+    {    
+        GUI.DrawTexture(GUILayoutUtility.GetRect(15, 50), inputsBanner, ScaleMode.ScaleToFit);
+        
+        inputs = EditorGUILayout.Foldout(inputs, "");
 
         if (inputs)
         {
