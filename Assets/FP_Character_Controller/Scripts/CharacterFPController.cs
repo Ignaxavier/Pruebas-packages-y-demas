@@ -20,7 +20,7 @@ public class CharacterFPController : MonoBehaviour
     public      float       _life = 100f;
     public      float       _movementSpeed = 150f;
     public      float       _jumpForce = 8f;
-    public      float       _height = 2f;
+    public      float       _scale = 2f;
     public      float       _sprintMultiply = 2f;
     public      float       _sprintFrequency;
     public      float       _sprintMagnitude;
@@ -31,8 +31,10 @@ public class CharacterFPController : MonoBehaviour
     public      float       _walkFOV = 60f;
     public      float       _sprintFOV = 70f;
     public      float       _zoomFOV = 10f;
-    public      float        _originalLife;
-    private     float       originalHeight;
+    public      float       _originalLife;
+    public      float       _crouchHeigth = 0.20f;
+    private     float       standarHeight;
+    private     float       originalScale;
     private     float       movementSpeedRegister;
     #endregion
 
@@ -52,9 +54,12 @@ public class CharacterFPController : MonoBehaviour
     public      bool        _multipleJumps;
     public      bool        _canJump;
     public      bool        _canSprint;
+    public      bool        _canCrouch;
     public      bool        _canZoom;
     public      bool        _stopWalkingInTheZoom;
     public      bool        _penalizedWalkingSpeedInTheZoom;
+    public      bool        _holdCrounchButton;
+    public      bool        _pressCrounchButton;
     #endregion
 
     #region Input
@@ -64,6 +69,7 @@ public class CharacterFPController : MonoBehaviour
     public      string      _jumpInput = "Jump";
     public      string      _sprintInput = "Sprint";
     public      string      _zoomInput = "Zoom";
+    public      string      _crouchInput = "Crouch";
     #endregion
 
     public      ForceMode       _jumpForceMode = ForceMode.Impulse;
@@ -88,8 +94,9 @@ public class CharacterFPController : MonoBehaviour
         movementSpeedRegister = _movementSpeed;
 
         CameraSettings();
-        Height();
+        Scale();
         _originalLife = _life;
+        standarHeight = _col.height;
     }
 
     void Update()
@@ -99,11 +106,12 @@ public class CharacterFPController : MonoBehaviour
         Jump();
         Sprint();
         Zoom();
+        Crouch();
         #endregion
 
         #region Settings
         CameraSettings();
-        ChangeHeight(_height);
+        ChangeScale(_scale);
         #endregion
     }
 
@@ -162,7 +170,6 @@ public class CharacterFPController : MonoBehaviour
                     _movementSpeed *= _sprintMultiply;
                     _cam.fieldOfView = _sprintFOV;
                     isSprint = true;
-                    //StartCoroutine(_camLook.CameraShake(true, _sprintShakeIntensityX, _sprintShakeIntensityY));
                     _camLook._isRuning = true;
                 }
             }
@@ -172,7 +179,38 @@ public class CharacterFPController : MonoBehaviour
                 _cam.fieldOfView = _walkFOV;
                 isSprint = false;
                 _camLook._isRuning = false;
-                //StopAllCoroutines();
+            }
+        }
+    }
+
+    private void Crouch()
+    {
+        if (_canCrouch)
+        {
+            if(_pressCrounchButton && !_holdCrounchButton)
+            {
+                if (Input.GetButtonDown(_crouchInput))
+                {
+                    if(_col.height == standarHeight)
+                    {
+                        _col.height = _crouchHeigth;
+                    }
+                    else if (_col.height == _crouchHeigth)
+                    {
+                        _col.height = standarHeight;
+                    }
+                }
+            }
+            else if (!_pressCrounchButton && _holdCrounchButton)
+            {
+                if (Input.GetButtonDown(_crouchInput))
+                {
+                    _col.height = _crouchHeigth;
+                }
+                else if (Input.GetButtonUp(_crouchInput))
+                {
+                    _col.height = standarHeight;
+                }
             }
         }
     }
@@ -224,23 +262,26 @@ public class CharacterFPController : MonoBehaviour
     #endregion
 
     #region Settings
-    #region General Height
-    private void Height()
+
+    #region General Scale
+
+    //This Affect the transform Scale, not the capsule collider
+    private void Scale()
     {
-        originalHeight = _height;
-        transform.localScale = new Vector3(_height, _height, _height);
+        originalScale = _scale;
+        transform.localScale = new Vector3(_scale, _scale, _scale);
     }
 
-    private void ChangeHeight(float value)
+    private void ChangeScale(float value)
     {
-        if(value != originalHeight)
+        if(value != originalScale)
         {
-            transform.localScale = new Vector3(_height, _height, _height);
+            transform.localScale = new Vector3(_scale, _scale, _scale);
 
-            originalHeight = _height;
+            originalScale = _scale;
         }
     }
-    #endregion
+    #endregion 
 
     private void CameraSettings()
     {

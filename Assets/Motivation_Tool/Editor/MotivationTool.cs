@@ -38,7 +38,7 @@ public class MotivationTool : EditorWindow
             else
             {
                 EditorGUILayout.LabelField(_motivationQuotes[_quotesIndex], EditorStyles.boldLabel);
-                GUI.DrawTexture(GUILayoutUtility.GetRect(300, 300), Resources.Load<Texture2D>("MotivationTool/" + _motivationPhotos[_photosIndex]));
+                GUI.DrawTexture(GUILayoutUtility.GetRect(300, 300), Resources.Load<Texture2D>(_motivationPhotos[_photosIndex]));
             }
         }
     }

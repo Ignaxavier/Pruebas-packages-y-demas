@@ -293,6 +293,7 @@ MonoBehaviour:
   _sprintFOV: 70
   _zoomFOV: 10
   _originalLife: 0
+  _crouchHeigth: 0.2
   _countToCanJump: 2
   _canWalk: 1
   _multipleJumps: 0
@@ -305,7 +306,8 @@ MonoBehaviour:
   _axisZInput: Vertical
   _jumpInput: Jump
   _sprintInput: Sprint
-  _zoomInput: Zoom
+  _zoomInput: Crouch
+  _crouchInput: Crouch
   _jumpForceMode: 1
 --- !u!23 &671007420
 MeshRenderer:
@@ -361,7 +363,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 671007416}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.01, y: 2.3516283, z: 6.13}
+  m_LocalPosition: {x: 2.01, y: 2.3116283, z: 6.457}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 963194228}
@@ -394,7 +396,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rayDistance: 1.65
-  _positionYOffset: 0.6
+  _positionYOffset: 0.56
   _layerMask:
     serializedVersion: 2
     m_Bits: 51
