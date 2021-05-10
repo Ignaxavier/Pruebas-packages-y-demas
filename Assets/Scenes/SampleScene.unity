@@ -281,7 +281,7 @@ MonoBehaviour:
   _life: 100
   _movementSpeed: 200
   _jumpForce: 500
-  _height: 2
+  _scale: 2
   _sprintMultiply: 2
   _sprintFrequency: 0
   _sprintMagnitude: 0
@@ -298,10 +298,13 @@ MonoBehaviour:
   _canWalk: 1
   _multipleJumps: 0
   _canJump: 1
-  _canSprint: 0
-  _canZoom: 0
+  _canSprint: 1
+  _canCrouch: 1
+  _canZoom: 1
   _stopWalkingInTheZoom: 0
   _penalizedWalkingSpeedInTheZoom: 0
+  _holdCrounchButton: 0
+  _pressCrounchButton: 0
   _axisXInput: Horizontal
   _axisZInput: Vertical
   _jumpInput: Jump
@@ -363,7 +366,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 671007416}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.01, y: 2.3116283, z: 6.457}
+  m_LocalPosition: {x: -0.63, y: 2.3116283, z: 6.457}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 963194228}
