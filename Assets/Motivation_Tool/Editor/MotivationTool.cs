@@ -3,12 +3,11 @@ using UnityEngine;
 
 public class MotivationTool : EditorWindow
 {
-    private     string[]    _motivationQuotes = {"¡Tú puedes!", "You can do it!", "Ganbatte!", "ты можешь", "Vos podes Rey"};
-    private     string[]    _motivationPhotos = { "R1", "R2", "R3", "R4", "R5"};
-    private     int         _photosIndex;
-    private     int         _quotesIndex;
+    public      MotivationResources _mr;
+    private     int                 _photosIndex;
+    private     int                 _quotesIndex;
 
-    private     GUIStyle    myStyle;
+    private     GUIStyle            myStyle;
 
     [MenuItem("CustomTool/MotivationTool")]
     public static void OpenWindow()
@@ -21,9 +20,6 @@ public class MotivationTool : EditorWindow
 
     private void OnEnable()
     {
-        _quotesIndex = Random.Range(0, _motivationQuotes.Length);
-        _photosIndex = Random.Range(0, _motivationPhotos.Length);
-
         myStyle = new GUIStyle();
         myStyle.fontSize = 27;
         myStyle.alignment = TextAnchor.MiddleCenter;
@@ -34,15 +30,22 @@ public class MotivationTool : EditorWindow
     {
         BackGround();
 
-        var generateButton = GUILayout.Button("Generate Motivation");
-
-        if (generateButton)
+        if(_mr != null)
         {
-            _quotesIndex = Random.Range(0, _motivationQuotes.Length);
-            _photosIndex = Random.Range(0, _motivationPhotos.Length);
-        }
+            var generateButton = GUILayout.Button("Generate Motivation");
 
-        Generate();
+            if (generateButton)
+            {
+                _quotesIndex = Random.Range(0, _mr._motivationQuotes.Length);
+                _photosIndex = Random.Range(0, _mr._motivationPhotos.Length);
+            }
+            
+            Generate();
+        }
+        else if (_mr == null)
+        {
+            _mr = EditorGUILayout.ObjectField("", _mr, typeof(MotivationResources), true) as MotivationResources;
+        }
     }
 
     private void BackGround()
@@ -53,7 +56,7 @@ public class MotivationTool : EditorWindow
     private void Generate()
     {
         GUILayout.Space(6);
-        GUILayout.Label(_motivationQuotes[_quotesIndex], myStyle);
-        GUI.DrawTexture(new Rect(new Vector2(0, 65), new Vector2(300, 280)), Resources.Load<Texture2D>(_motivationPhotos[_photosIndex]), ScaleMode.ScaleToFit);
+        GUILayout.Label(_mr._motivationQuotes[_quotesIndex], myStyle);
+        GUI.DrawTexture(new Rect(new Vector2(0, 65), new Vector2(300, 280)), _mr._motivationPhotos[_photosIndex], ScaleMode.ScaleToFit);
     }
 }
