@@ -37,10 +37,12 @@ public class SnapperEditor : Editor
         _snapper._DirectionOfTheRay = (Snapper.dirRay)EditorGUILayout.EnumPopup("Direction of the Ray", _snapper._DirectionOfTheRay);
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Ray Distance", EditorStyles.boldLabel);
-        _snapper._rayDistance = EditorGUILayout.Slider(_snapper._rayDistance, -50f, 50f);
+        _snapper._rayDistance = EditorGUILayout.Slider(_snapper._rayDistance, -5f, 5f);
         EditorGUILayout.Space();
         _snapper._positionOffset = EditorGUILayout.FloatField("Position Offset", _snapper._positionOffset);
-    
+        EditorGUILayout.Space();
+        _snapper._layerMask = EditorGUILayout.LayerField("Layer Mask", _snapper._layerMask);
+
     }
 
     private void Header()
@@ -55,7 +57,7 @@ public class SnapperEditor : Editor
     {
         if (_snapper._onoff)
         {
-            EditorGUI.DrawRect(new Rect(4, 3, 5000, 207), Color.grey);
+            EditorGUI.DrawRect(new Rect(4, 3, 5000, 232), Color.grey);
         }
         else
         {

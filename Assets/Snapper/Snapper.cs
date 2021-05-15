@@ -10,12 +10,11 @@ public class Snapper : MonoBehaviour
     public      LayerMask               _layerMask;
     public      Transform               _objectTouched;
     public      dirRay                  _DirectionOfTheRay;
-    public      bool                    _onoff;
+    public      bool                    _onoff = false;
 
     public      enum                    dirRay {X, Y, Z};
     private     RaycastHit              hit;
     private     Vector3                 rayVector;
-    private     float                   rayVectorMultiplyer;
 
     void Update()
     {
@@ -34,25 +33,44 @@ public class Snapper : MonoBehaviour
 
     private void VectorRay()
     {
-        rayVectorMultiplyer = Mathf.Clamp(_rayDistance, -1f, 1f);
-
         switch (_DirectionOfTheRay)
         {
             case dirRay.X:
 
-                rayVector = Vector3.right * rayVectorMultiplyer;
+                if(_rayDistance >= 0)
+                {
+                    rayVector = Vector3.right;
+                }
+                else
+                {
+                    rayVector = -Vector3.right;
+                }
 
                 break;
 
             case dirRay.Y:
 
-                rayVector = Vector3.up * rayVectorMultiplyer;
+                if(_rayDistance >= 0)
+                {
+                    rayVector = Vector3.up;
+                }
+                else
+                {
+                    rayVector = -Vector3.up;
+                }
 
                 break;
 
             case dirRay.Z:
 
-                rayVector = Vector3.forward * rayVectorMultiplyer;
+                if(_rayDistance >= 0)
+                {
+                    rayVector = Vector3.forward;
+                }
+                else
+                {
+                    rayVector = -Vector3.forward;
+                }
 
                 break;
         }
@@ -68,11 +86,10 @@ public class Snapper : MonoBehaviour
     
     private void Ray()
     {
-        Debug.DrawRay(this.transform.position, rayVector, Color.red);
+        Debug.DrawRay(this.transform.position, rayVector * Mathf.Abs(_rayDistance), Color.yellow);
 
-        if (Physics.Raycast(this.transform.position, rayVector, out hit, _rayDistance, _layerMask))
+        if (Physics.Raycast(transform.position, rayVector, out hit, _rayDistance, _layerMask))
         {
-
             Debug.Log("Toque");
 
             switch (_DirectionOfTheRay)

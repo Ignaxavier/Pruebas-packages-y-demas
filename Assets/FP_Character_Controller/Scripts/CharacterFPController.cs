@@ -16,54 +16,76 @@ public class CharacterFPController : MonoBehaviour
     #endregion
 
     #region Float
-    [Header("Floats")]
-    public      float       _life = 100f;
+    //Walk
     public      float       _movementSpeed = 150f;
+    public      float       _walkFrequency;
+    public      float       _walkMagnitude;
+    public      float       _walkFOV = 60f;
+
+    //Jump
     public      float       _jumpForce = 8f;
+
+    //Scale
     public      float       _scale = 2f;
-    public      float       _sprintMultiply = 2f;
+    public      float       _colliderHeight = 2f;
+    public      float       _colliderRadius = 0.5f;
+
+    //Sprint
+    public      float       _sprintMultiply = 2f;  //Speed Multiply
     public      float       _sprintFrequency;
     public      float       _sprintMagnitude;
-    public      float       _ZoomPenalized = 75f;
+    public      float       _sprintFOV = 70f;
+
+    //Crouch
+    public      float       _crouchHeigth = 0.20f;
+    public      float       _crouchPenalized;  //Speed Penalized
+
+    //Zoom
+    public      float       _ZoomPenalized = 75f;  //Speed Penalized
+    public      float       _zoomFOV = 10f;
+
+    //Camera
     public      float       _cameraSensitive = 100f;
     public      float       _cameraNegativeAngle = -90f;
     public      float       _cameraPositiveAngle = 90f;
-    public      float       _walkFOV = 60f;
-    public      float       _sprintFOV = 70f;
-    public      float       _zoomFOV = 10f;
-    public      float       _originalLife;
-    public      float       _crouchHeigth = 0.20f;
-    private     float       standarHeight;
-    private     float       originalScale;
+
+    //Others
     private     float       movementSpeedRegister;
     #endregion
 
     #region Int
-    [Header("Ints")]
+    //Jump
     private     int         countToCanJumpRegister;
     public      int         _countToCanJump = 2;
     #endregion
 
     #region Bool
-    [Header("Bools")]
-    private     bool        isGroud;
-    private     bool        isSprint;
-    private     bool        isZoom;
-    private     bool        stop;
+    //Walk
     public      bool        _canWalk;
-    public      bool        _multipleJumps;
-    public      bool        _canJump;
+    private     bool        stop;
+
+    //Sprint
     public      bool        _canSprint;
+    private     bool        isSprint;
+
+    //Jump
+    public      bool        _canJump;
+    public      bool        _multipleJumps;
+    private     bool        isGroud;
+
+    //Crouch
     public      bool        _canCrouch;
+    public      bool        _holdCrounchButton;
+    public      bool        _pressCrounchButton;
+
+    //Zoom
+    private     bool        isZoom;
     public      bool        _canZoom;
     public      bool        _stopWalkingInTheZoom;
     public      bool        _penalizedWalkingSpeedInTheZoom;
-    public      bool        _holdCrounchButton;
-    public      bool        _pressCrounchButton;
     #endregion
 
     #region Input
-    [Header("Inputs")]
     public      string      _axisXInput = "Horizontal";
     public      string      _axisZInput = "Vertical";
     public      string      _jumpInput = "Jump";
@@ -86,17 +108,40 @@ public class CharacterFPController : MonoBehaviour
         _groundCol = GetComponent<BoxCollider>();
         _cam = GetComponentInChildren<Camera>();
         _camLook = GetComponentInChildren<FPCameraLook>();
+
+        /*
+        if(_cam == null && _camLook == null)
+        {
+            var FPCamera = Instantiate(gameObject, transform.position, Quaternion.identity);
+
+            FPCamera.transform.parent = this.transform;
+
+            FPCamera.AddComponent(typeof(FPCameraLook));
+
+            _cam = GetComponentInChildren<Camera>();
+            _camLook = GetComponentInChildren<FPCameraLook>();
+        } */
         #endregion
+
+        #region Settings
+        HeightAndRadius();
+        CameraSettings();
+        Scale();
+        #endregion
+
+        _col.isTrigger = false;
+        _groundCol.isTrigger = true;
 
         _cam.fieldOfView = _walkFOV;
 
         countToCanJumpRegister = _countToCanJump;
         movementSpeedRegister = _movementSpeed;
 
-        CameraSettings();
-        Scale();
-        _originalLife = _life;
-        standarHeight = _col.height;
+
+        if (_canCrouch && !_holdCrounchButton && !_pressCrounchButton)
+        {
+            _pressCrounchButton = true;
+        }
     }
 
     void Update()
@@ -108,11 +153,6 @@ public class CharacterFPController : MonoBehaviour
         Zoom();
         Crouch();
         #endregion
-
-        #region Settings
-        CameraSettings();
-        ChangeScale(_scale);
-        #endregion
     }
 
     #region Basic Actions
@@ -121,6 +161,7 @@ public class CharacterFPController : MonoBehaviour
         inputVec = (transform.forward * Input.GetAxis(_axisZInput) + transform.right * Input.GetAxis(_axisXInput)) * _movementSpeed * Time.deltaTime;
 
         this.inputVec.y = _rb.velocity.y;
+
         /*if(inputVec.sqrMagnitude > 1)
         {
             inputVec.Normalize();
@@ -173,7 +214,7 @@ public class CharacterFPController : MonoBehaviour
                     _camLook._isRuning = true;
                 }
             }
-            else
+            else if (Input.GetButtonUp(_sprintInput))
             {
                 _movementSpeed = movementSpeedRegister;
                 _cam.fieldOfView = _walkFOV;
@@ -183,37 +224,36 @@ public class CharacterFPController : MonoBehaviour
         }
     }
 
+    #region Crouch
     private void Crouch()
     {
         if (_canCrouch)
         {
             if(_pressCrounchButton && !_holdCrounchButton)
             {
-                if (Input.GetButtonDown(_crouchInput))
-                {
-                    if(_col.height == standarHeight)
-                    {
-                        _col.height = _crouchHeigth;
-                    }
-                    else if (_col.height == _crouchHeigth)
-                    {
-                        _col.height = standarHeight;
-                    }
-                }
+                Crouching();
             }
             else if (!_pressCrounchButton && _holdCrounchButton)
             {
-                if (Input.GetButtonDown(_crouchInput))
-                {
-                    _col.height = _crouchHeigth;
-                }
-                else if (Input.GetButtonUp(_crouchInput))
-                {
-                    _col.height = standarHeight;
-                }
+                Crouching();
             }
         }
     }
+
+    private void Crouching()
+    {
+        if (Input.GetButtonDown(_crouchInput))
+        {
+            _col.height = _crouchHeigth;
+            _movementSpeed -= _crouchPenalized;
+        }
+        else if (Input.GetButtonUp(_crouchInput))
+        {
+            _col.height = _colliderHeight;
+            _movementSpeed = movementSpeedRegister;
+        }
+    }
+    #endregion
 
     private void Zoom()
     {
@@ -234,7 +274,7 @@ public class CharacterFPController : MonoBehaviour
                 }
 
             }
-            else
+            else if (Input.GetButtonUp(_zoomInput))
             {
                 _cam.fieldOfView = _walkFOV;
                 isZoom = false;
@@ -251,37 +291,22 @@ public class CharacterFPController : MonoBehaviour
         }
     }
 
-    public void GetDmage(float value)
-    {
-        if(value != 0)
-        {
-            _life -= value;
-        }
-    }
-
     #endregion
 
     #region Settings
 
-    #region General Scale
-
     //This Affect the transform Scale, not the capsule collider
     private void Scale()
     {
-        originalScale = _scale;
         transform.localScale = new Vector3(_scale, _scale, _scale);
     }
 
-    private void ChangeScale(float value)
+    //This affect the capsule collider
+    private void HeightAndRadius()
     {
-        if(value != originalScale)
-        {
-            transform.localScale = new Vector3(_scale, _scale, _scale);
-
-            originalScale = _scale;
-        }
+        _col.height = _colliderHeight;
+        _col.radius = _colliderRadius;
     }
-    #endregion 
 
     private void CameraSettings()
     {

@@ -6,6 +6,7 @@ using UnityEditor;
 [CustomEditor(typeof(CharacterFPController))]
 public class FPCCEditor : Editor
 {
+    #region Variables
     CharacterFPController _FPCC;
 
     #region Textures
@@ -17,31 +18,46 @@ public class FPCCEditor : Editor
     #endregion
 
     #region Bools
-    bool basicActions;
+    //Walk
     bool walk;
+    bool walkShakeIntensity;
+
+    //Jump
     bool jump;
+
+    //Sprint
     bool sprint;
+    bool sprintShakeIntensity;
+
+    //Crouch
     bool crouch;
     bool holdCrouch = true;
     bool pressCrouch = true;
+
+    //Zoom
     bool zoom;
     bool penalizedWalkingSpeedZoom = true;
     bool stopWalkZoom = true;
-    bool inputs;
+
+    //Options
+    bool basicActions;
     bool cameraSettings;
     bool characterScale;
-    bool sprintShakeIntensity;
+    bool inputs;
+    #endregion
     #endregion
 
     private void OnEnable()
     {
         _FPCC = (CharacterFPController)target;
 
+        #region Textures
         titleBanner = Resources.Load<Texture2D>("FPCharacterController");
         basicActionsBanner = Resources.Load<Texture2D>("BasicActions");
         cameraSettingsBanner = Resources.Load<Texture2D>("CameraSettings");
         scaleCharacterBanner = Resources.Load<Texture2D>("ScaleoftheCharacter");
         inputsBanner = Resources.Load<Texture2D>("ShowInputs");
+        #endregion
     }
 
     public override void OnInspectorGUI()
@@ -53,9 +69,6 @@ public class FPCCEditor : Editor
 
         EditorGUILayout.LabelField("By Ignacio Settembrini", EditorStyles.boldLabel);
         EditorGUILayout.Space();
-        _FPCC._life = EditorGUILayout.FloatField("Life", _FPCC._life);
-        EditorGUI.ProgressBar(GUILayoutUtility.GetRect(15, 15), _FPCC._life / _FPCC._originalLife, "Life " + _FPCC._life);
-
         EditorGUILayout.Space();
         BasicActions();
         Separator();
@@ -65,56 +78,49 @@ public class FPCCEditor : Editor
         Separator();
         ShowInputs();
 
+        AnotherButtons();
     }
 
     private void Separator()
     {
         EditorGUILayout.Space();
-        EditorGUI.DrawRect(GUILayoutUtility.GetRect(1, 10), Color.black);
+        EditorGUI.DrawRect(GUILayoutUtility.GetRect(1, 1), Color.black);
         EditorGUILayout.Space();
     }
 
     #region Basic Actions
-    private void BasicActions()
-    {    
-        GUI.DrawTexture(GUILayoutUtility.GetRect(15, 50), basicActionsBanner, ScaleMode.ScaleToFit);
-        
-        basicActions = EditorGUILayout.Foldout(basicActions, "");
-
-        if (basicActions)
-        {
-            WalkGUI();
-            EditorGUI.DrawRect(GUILayoutUtility.GetRect(1, 5), Color.red);
-            JumpGUI();
-            EditorGUI.DrawRect(GUILayoutUtility.GetRect(1, 5), Color.red);
-            SprintGUI();
-            EditorGUI.DrawRect(GUILayoutUtility.GetRect(1, 5), Color.red);
-            CrouchGUI();
-            EditorGUI.DrawRect(GUILayoutUtility.GetRect(1, 5), Color.red);
-            ZoomGUI();
-        }
-    }
-
     private void WalkGUI()
     {
-        walk = EditorGUILayout.Foldout(walk, "Walk");
+        walk = EditorGUILayout.Foldout(walk, "Walk", true, EditorStyles.boldLabel);
 
         if(walk)
         {
             _FPCC._canWalk = EditorGUILayout.Toggle("Can Walk", _FPCC._canWalk);
 
-            if(_FPCC._canWalk && walk)
+            if(_FPCC._canWalk)
             {
                 _FPCC._movementSpeed = EditorGUILayout.FloatField("Movement Speed", _FPCC._movementSpeed);
                 EditorGUILayout.LabelField("Walk FOV", EditorStyles.boldLabel);
                 _FPCC._walkFOV = EditorGUILayout.Slider(_FPCC._walkFOV, 0, 150F);
+
+                walkShakeIntensity = EditorGUILayout.Foldout(walkShakeIntensity, "Walk Shake Intensity");
+
+                if (walkShakeIntensity)
+                {
+                    _FPCC._walkFrequency = EditorGUILayout.Slider("Frequency", _FPCC._walkFrequency, 0f, 3f);
+                    _FPCC._walkMagnitude = EditorGUILayout.Slider("Magnitude", _FPCC._walkMagnitude, 0f, 0.2f);
+
+                    EditorGUILayout.Space();
+                    EditorGUILayout.Space();
+                    EditorGUILayout.LabelField("Camera Position Y + (Sin(Time * Frequency) * Magnitude)", EditorStyles.boldLabel);
+                }
             }
         }
     }
 
     private void JumpGUI()
     {
-        jump = EditorGUILayout.Foldout(jump, "Jump");
+        jump = EditorGUILayout.Foldout(jump, "Jump", true, EditorStyles.boldLabel);
 
         if(jump)
         {
@@ -136,7 +142,7 @@ public class FPCCEditor : Editor
 
     private void SprintGUI()
     {
-        sprint = EditorGUILayout.Foldout(sprint, "Sprint");
+        sprint = EditorGUILayout.Foldout(sprint, "Sprint", true, EditorStyles.boldLabel);
 
         if(sprint)
         {
@@ -152,8 +158,12 @@ public class FPCCEditor : Editor
 
                 if (sprintShakeIntensity)
                 {
-                    _FPCC._sprintFrequency = EditorGUILayout.Slider("Frequency", _FPCC._sprintFrequency, 0f, 50f);
-                    _FPCC._sprintMagnitude = EditorGUILayout.Slider("Magnitude", _FPCC._sprintMagnitude, 0f, 1f);
+                    _FPCC._sprintFrequency = EditorGUILayout.Slider("Frequency", _FPCC._sprintFrequency, 0f, 10f);
+                    _FPCC._sprintMagnitude = EditorGUILayout.Slider("Magnitude", _FPCC._sprintMagnitude, 0f, 0.3f);
+
+                    EditorGUILayout.Space();
+                    EditorGUILayout.Space();
+                    EditorGUILayout.LabelField("Camera Position Y + (Sin(Time * Frequency) * Magnitude)", EditorStyles.boldLabel);
                 }
             }
         }
@@ -161,7 +171,7 @@ public class FPCCEditor : Editor
 
     private void CrouchGUI()
     {
-        crouch = EditorGUILayout.Foldout(crouch, "Crouch");
+        crouch = EditorGUILayout.Foldout(crouch, "Crouch", true, EditorStyles.boldLabel);
 
         if (crouch)
         {
@@ -169,10 +179,19 @@ public class FPCCEditor : Editor
 
             if (_FPCC._canCrouch)
             {
+                EditorGUILayout.Space();
+                _FPCC._crouchHeigth = EditorGUILayout.FloatField("Crouch Height", _FPCC._crouchHeigth);
+                EditorGUILayout.Space();
+                _FPCC._crouchPenalized = EditorGUILayout.FloatField("Penalized Walking Speed in Crouch", _FPCC._crouchPenalized);
+
+                EditorGUILayout.Space();
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Types of Crouch", EditorStyles.boldLabel);
+                EditorGUILayout.Space();
 
                 if (holdCrouch)
                 {
-                    _FPCC._holdCrounchButton = EditorGUILayout.Toggle("Hold the Crouch Buutton", _FPCC._holdCrounchButton);
+                    _FPCC._holdCrounchButton = EditorGUILayout.Toggle("Hold the Crouch Button", _FPCC._holdCrounchButton);
 
                     if (_FPCC._holdCrounchButton)
                     {
@@ -186,7 +205,7 @@ public class FPCCEditor : Editor
 
                 if (pressCrouch)
                 {
-                    _FPCC._pressCrounchButton = EditorGUILayout.Toggle("Press the Crouch Buutton", _FPCC._pressCrounchButton);
+                    _FPCC._pressCrounchButton = EditorGUILayout.Toggle("Press the Crouch Button", _FPCC._pressCrounchButton);
 
                     if (_FPCC._pressCrounchButton)
                     {
@@ -203,7 +222,7 @@ public class FPCCEditor : Editor
 
     private void ZoomGUI()
     {
-        zoom = EditorGUILayout.Foldout(zoom, "Zoom");
+        zoom = EditorGUILayout.Foldout(zoom, "Zoom", true, EditorStyles.boldLabel);
 
         if(zoom)
         {
@@ -216,7 +235,7 @@ public class FPCCEditor : Editor
 
                 if(penalizedWalkingSpeedZoom)
                 {
-                    _FPCC._penalizedWalkingSpeedInTheZoom = EditorGUILayout.Toggle("Penalized Waking Speed In The Zoom", _FPCC._penalizedWalkingSpeedInTheZoom);
+                    _FPCC._penalizedWalkingSpeedInTheZoom = EditorGUILayout.Toggle("Penalized Walking Speed In The Zoom", _FPCC._penalizedWalkingSpeedInTheZoom);
 
                     if(_FPCC._penalizedWalkingSpeedInTheZoom)
                     {
@@ -246,27 +265,100 @@ public class FPCCEditor : Editor
     }
     #endregion
 
+    #region Options
+    private void BasicActions()
+    {    
+        GUI.DrawTexture(GUILayoutUtility.GetRect(15, 50), basicActionsBanner, ScaleMode.ScaleToFit);
+
+        #region Button Stuff
+
+        var basicActionsButton = GUILayout.Button("Show");
+
+        if(basicActionsButton && !basicActions)
+        {
+            basicActions = true;
+        }
+        else if (basicActionsButton && basicActions)
+        {
+            basicActions = false;
+        }
+
+        #endregion
+
+        if (basicActions)
+        {
+            WalkGUI();
+            EditorGUI.DrawRect(GUILayoutUtility.GetRect(1, 1), Color.grey);
+            JumpGUI();
+            EditorGUI.DrawRect(GUILayoutUtility.GetRect(1, 1), Color.grey);
+            SprintGUI();
+            EditorGUI.DrawRect(GUILayoutUtility.GetRect(1, 1), Color.grey);
+            CrouchGUI();
+            EditorGUI.DrawRect(GUILayoutUtility.GetRect(1, 1), Color.grey);
+            ZoomGUI();
+        }
+    }
+
     private void CharacterScale()
     {
         GUI.DrawTexture(GUILayoutUtility.GetRect(15, 50), scaleCharacterBanner, ScaleMode.ScaleToFit);
-            
-        characterScale = EditorGUILayout.Foldout(characterScale, "");
+
+        #region Button Stuff
+
+        var characterScaleButton = GUILayout.Button("Show");
+
+        if (characterScaleButton && !characterScale)
+        {
+            characterScale = true;
+        }
+        else if (characterScaleButton && characterScale)
+        {
+            characterScale = false;
+        }
+
+        #endregion
 
         if (characterScale)
         {
+            EditorGUILayout.LabelField("This parameters only affect at Awake Frame", EditorStyles.helpBox);
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.LabelField("Capsule Settings", EditorStyles.boldLabel);
+            _FPCC._colliderHeight = EditorGUILayout.FloatField("Height", _FPCC._colliderHeight);
+            _FPCC._colliderRadius = EditorGUILayout.FloatField("Radius", _FPCC._colliderRadius);
+            EditorGUILayout.Space();
+
+            EditorGUILayout.LabelField("Transform Scale", EditorStyles.boldLabel);
             _FPCC._scale = EditorGUILayout.FloatField("Scale", _FPCC._scale);
         }
     }
 
     private void CameraSettings()
-    {
-            
+    {       
         GUI.DrawTexture(GUILayoutUtility.GetRect(15, 50), cameraSettingsBanner, ScaleMode.ScaleToFit);
-        
-        cameraSettings = EditorGUILayout.Foldout(cameraSettings, "");
+
+        #region Button Stuff
+
+        var cameraSettingsButton = GUILayout.Button("Show");
+
+        if (cameraSettingsButton && !cameraSettings)
+        {
+            cameraSettings = true;
+        }
+        else if (cameraSettingsButton && cameraSettings)
+        {
+            cameraSettings = false;
+        }
+
+        #endregion
 
         if (cameraSettings)
         {
+            EditorGUILayout.LabelField("This parameters only affect at Awake Frame", EditorStyles.helpBox);
+
+            EditorGUILayout.Space();
+
             _FPCC._cameraSensitive = EditorGUILayout.FloatField("Camera Sensitive", _FPCC._cameraSensitive);
             EditorGUILayout.LabelField("Negative & Positive Angle", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
@@ -279,8 +371,21 @@ public class FPCCEditor : Editor
     private void ShowInputs()
     {    
         GUI.DrawTexture(GUILayoutUtility.GetRect(15, 50), inputsBanner, ScaleMode.ScaleToFit);
-        
-        inputs = EditorGUILayout.Foldout(inputs, "");
+
+        #region Button Stuff
+
+        var inputsButton = GUILayout.Button("Show");
+
+        if (inputsButton && !inputs)
+        {
+            inputs = true;
+        }
+        else if (inputsButton && inputs)
+        {
+            inputs = false;
+        }
+
+        #endregion
 
         if (inputs)
         {
@@ -307,7 +412,7 @@ public class FPCCEditor : Editor
             if (_FPCC._canCrouch)
             {
                 EditorGUILayout.LabelField("Crouch", EditorStyles.boldLabel);
-                _FPCC._zoomInput = EditorGUILayout.TextField(_FPCC._crouchInput);
+                _FPCC._crouchInput = EditorGUILayout.TextField(_FPCC._crouchInput);
             }
 
             if (_FPCC._canZoom)
@@ -316,5 +421,47 @@ public class FPCCEditor : Editor
                 _FPCC._zoomInput = EditorGUILayout.TextField(_FPCC._zoomInput);
             }
         }
+    }
+    #endregion
+
+    private void AnotherButtons()
+    {
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+
+        EditorGUILayout.LabelField("ME", EditorStyles.boldLabel);
+
+        #region Twitter
+        var twitter = GUILayout.Button("Follow me on Twitter");
+
+        if (twitter)
+        {
+            Application.OpenURL("https://twitter.com/ISettembrini");
+        }
+        #endregion
+
+        EditorGUILayout.Space();
+
+        #region Instagram
+        var instagram = GUILayout.Button("Follow me on Instagram");
+
+        if (instagram)
+        {
+            Application.OpenURL("https://www.instagram.com/ignaxavier/");
+        }
+        #endregion
+
+        EditorGUILayout.Space();
+
+        #region Paypal
+        var paypal = GUILayout.Button("Paypal Donations");
+
+        if (paypal)
+        {
+            Application.OpenURL("https://www.paypal.com/donate?hosted_button_id=N5H7GF58NM9ZC");
+        }
+        #endregion
     }
 }
