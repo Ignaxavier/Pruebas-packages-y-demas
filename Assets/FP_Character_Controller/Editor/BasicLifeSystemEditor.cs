@@ -8,10 +8,13 @@ public class BasicLifeSystemEditor : Editor
 {
     BasicLifeSystem     _BLS;
     GUIStyle            headerStyle;
+    Texture2D           headerTexture;
 
     private void OnEnable()
     {
         _BLS = (BasicLifeSystem)target;
+
+        headerTexture = Resources.Load<Texture2D>("BasicLifeSystem");
 
         headerStyle = new GUIStyle();
 
@@ -23,25 +26,32 @@ public class BasicLifeSystemEditor : Editor
     public override void OnInspectorGUI()
     {
         //base.OnInspectorGUI();
+
+        #region Background
+        EditorGUI.DrawRect(new Rect(new Vector2(6, 3), new Vector2(900, 106)), Color.white);
+        #endregion
+
         #region Header
         GUILayout.Space(5);
-        EditorGUILayout.LabelField("Basic Life System", headerStyle);
+        GUI.DrawTexture(GUILayoutUtility.GetRect(15, 50), headerTexture, ScaleMode.ScaleToFit);
         GUILayout.Space(2);
         EditorGUI.DrawRect(GUILayoutUtility.GetRect(1, 2), Color.black);
         GUILayout.Space(2);
         EditorGUILayout.LabelField("By Ignacio Settembrini", EditorStyles.boldLabel);
-        GUILayout.Space(10);
+        GUILayout.Space(8);
         #endregion
 
-        if (Application.isEditor)
+        #region Stuff
+        if (!EditorApplication.isPlaying)
         {
             _BLS._Life = EditorGUILayout.FloatField("Life", _BLS._Life);
             Repaint();
         }
-        else if (Application.isPlaying)
+        else if (EditorApplication.isPlaying)
         {
-            EditorGUI.ProgressBar(new Rect(50, 50, 500, 500), _BLS._Life / _BLS.originalLife, "Life");
+            EditorGUI.ProgressBar(GUILayoutUtility.GetRect(1, 18), _BLS._Life / _BLS.originalLife, "Life");
             Repaint();
         }
+        #endregion
     }
 }

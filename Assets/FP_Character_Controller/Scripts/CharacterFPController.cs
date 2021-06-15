@@ -62,19 +62,23 @@ public class CharacterFPController : MonoBehaviour
     #region Bool
     //Walk
     public      bool        _canWalk;
+    public      bool        _isWalking;
     private     bool        stop;
 
     //Sprint
     public      bool        _canSprint;
+    public      bool        _isSprinting;
     private     bool        isSprint;
 
     //Jump
     public      bool        _canJump;
+    public      bool        _isJumping;
     public      bool        _multipleJumps;
     private     bool        isGroud;
 
     //Crouch
     public      bool        _canCrouch;
+    public      bool        _isCrouching;
     public      bool        _holdCrounchButton;
     public      bool        _pressCrounchButton;
 
@@ -108,19 +112,6 @@ public class CharacterFPController : MonoBehaviour
         _groundCol = GetComponent<BoxCollider>();
         _cam = GetComponentInChildren<Camera>();
         _camLook = GetComponentInChildren<FPCameraLook>();
-
-        /*
-        if(_cam == null && _camLook == null)
-        {
-            var FPCamera = Instantiate(gameObject, transform.position, Quaternion.identity);
-
-            FPCamera.transform.parent = this.transform;
-
-            FPCamera.AddComponent(typeof(FPCameraLook));
-
-            _cam = GetComponentInChildren<Camera>();
-            _camLook = GetComponentInChildren<FPCameraLook>();
-        } */
         #endregion
 
         #region Settings
@@ -146,6 +137,12 @@ public class CharacterFPController : MonoBehaviour
 
     void Update()
     {
+       /* #region Settings
+        HeightAndRadius();
+        CameraSettings();
+        Scale();
+        #endregion
+       */
         #region Basic Actions
         Move();
         Jump();
@@ -162,14 +159,19 @@ public class CharacterFPController : MonoBehaviour
 
         this.inputVec.y = _rb.velocity.y;
 
-        /*if(inputVec.sqrMagnitude > 1)
+        if(inputVec.sqrMagnitude > 1)
         {
             inputVec.Normalize();
-        }*/
+        }
 
         if((inputVec.x != 0f || inputVec.z != 0f) && !stop && _canWalk)
         {
             _rb.velocity = inputVec;
+            _isWalking = true;
+        }
+        else
+        {
+            _isWalking = false;
         }
     }
 
@@ -181,6 +183,8 @@ public class CharacterFPController : MonoBehaviour
             {
                 _rb.AddForce(Vector3.up * _jumpForce * Time.deltaTime, _jumpForceMode);
 
+                _isJumping = true;
+
                 if (_multipleJumps)
                 {
                     if(_countToCanJump != 0)
@@ -190,11 +194,13 @@ public class CharacterFPController : MonoBehaviour
                     else
                     {
                         isGroud = false;
+                        _isJumping = false;
                     }
                 }
                 else
                 {
                     isGroud = false;
+                    _isJumping = false;
                 }
             }
         }
@@ -208,6 +214,7 @@ public class CharacterFPController : MonoBehaviour
             {
                 if (!isSprint)
                 {
+                    _isSprinting = true;
                     _movementSpeed *= _sprintMultiply;
                     _cam.fieldOfView = _sprintFOV;
                     isSprint = true;
@@ -216,6 +223,7 @@ public class CharacterFPController : MonoBehaviour
             }
             else if (Input.GetButtonUp(_sprintInput))
             {
+                _isSprinting = false;
                 _movementSpeed = movementSpeedRegister;
                 _cam.fieldOfView = _walkFOV;
                 isSprint = false;
@@ -246,11 +254,13 @@ public class CharacterFPController : MonoBehaviour
         {
             _col.height = _crouchHeigth;
             _movementSpeed -= _crouchPenalized;
+            _isCrouching = true;
         }
         else if (Input.GetButtonUp(_crouchInput))
         {
             _col.height = _colliderHeight;
             _movementSpeed = movementSpeedRegister;
+            _isCrouching = false;
         }
     }
     #endregion

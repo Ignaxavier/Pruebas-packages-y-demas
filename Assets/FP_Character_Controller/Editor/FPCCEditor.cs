@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+
 [CustomEditor(typeof(CharacterFPController))]
 public class FPCCEditor : Editor
 {
@@ -40,6 +41,7 @@ public class FPCCEditor : Editor
     bool stopWalkZoom = true;
 
     //Options
+    bool show;
     bool basicActions;
     bool cameraSettings;
     bool characterScale;
@@ -130,7 +132,10 @@ public class FPCCEditor : Editor
             {
                 _FPCC._jumpForce = EditorGUILayout.FloatField("Jump Force", _FPCC._jumpForce);
 
-                _FPCC._multipleJumps = EditorGUILayout.Toggle("Can Do It Multiple Jumps", _FPCC._multipleJumps);
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Label("Can Do It Multiple Jumps");
+                _FPCC._multipleJumps = EditorGUILayout.Toggle(_FPCC._multipleJumps);
+                EditorGUILayout.EndHorizontal();
 
                 if(_FPCC._multipleJumps)
                 {
@@ -182,7 +187,10 @@ public class FPCCEditor : Editor
                 EditorGUILayout.Space();
                 _FPCC._crouchHeigth = EditorGUILayout.FloatField("Crouch Height", _FPCC._crouchHeigth);
                 EditorGUILayout.Space();
-                _FPCC._crouchPenalized = EditorGUILayout.FloatField("Penalized Walking Speed in Crouch", _FPCC._crouchPenalized);
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Label("Penalized Walking Speed in Crouch");
+                _FPCC._crouchPenalized = EditorGUILayout.FloatField(_FPCC._crouchPenalized);
+                EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.Space();
                 EditorGUILayout.Space();
@@ -191,7 +199,10 @@ public class FPCCEditor : Editor
 
                 if (holdCrouch)
                 {
-                    _FPCC._holdCrounchButton = EditorGUILayout.Toggle("Hold the Crouch Button", _FPCC._holdCrounchButton);
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("Hold the Crouch Button");
+                    _FPCC._holdCrounchButton = EditorGUILayout.Toggle(_FPCC._holdCrounchButton);
+                    EditorGUILayout.EndHorizontal();
 
                     if (_FPCC._holdCrounchButton)
                     {
@@ -205,7 +216,10 @@ public class FPCCEditor : Editor
 
                 if (pressCrouch)
                 {
-                    _FPCC._pressCrounchButton = EditorGUILayout.Toggle("Press the Crouch Button", _FPCC._pressCrounchButton);
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("Press the Crouch Button");
+                    _FPCC._pressCrounchButton = EditorGUILayout.Toggle(_FPCC._pressCrounchButton);
+                    EditorGUILayout.EndHorizontal();
 
                     if (_FPCC._pressCrounchButton)
                     {
@@ -235,7 +249,10 @@ public class FPCCEditor : Editor
 
                 if(penalizedWalkingSpeedZoom)
                 {
-                    _FPCC._penalizedWalkingSpeedInTheZoom = EditorGUILayout.Toggle("Penalized Walking Speed In The Zoom", _FPCC._penalizedWalkingSpeedInTheZoom);
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("Penalized Walking Speed In The Zoom");
+                    _FPCC._penalizedWalkingSpeedInTheZoom = EditorGUILayout.Toggle(_FPCC._penalizedWalkingSpeedInTheZoom);
+                    EditorGUILayout.EndHorizontal();
 
                     if(_FPCC._penalizedWalkingSpeedInTheZoom)
                     {
@@ -249,7 +266,10 @@ public class FPCCEditor : Editor
                 }
                 if(stopWalkZoom)
                 {
-                    _FPCC._stopWalkingInTheZoom = EditorGUILayout.Toggle("Stop Walking In The Zoom", _FPCC._stopWalkingInTheZoom);
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("Stop Walking In The Zoom");
+                    _FPCC._stopWalkingInTheZoom = EditorGUILayout.Toggle(_FPCC._stopWalkingInTheZoom);
+                    EditorGUILayout.EndHorizontal();
 
                     if(_FPCC._stopWalkingInTheZoom)
                     {
@@ -302,6 +322,7 @@ public class FPCCEditor : Editor
     private void CharacterScale()
     {
         GUI.DrawTexture(GUILayoutUtility.GetRect(15, 50), scaleCharacterBanner, ScaleMode.ScaleToFit);
+        //show = EditorGUILayout.Foldout(show, "Show", true);
 
         #region Button Stuff
 
