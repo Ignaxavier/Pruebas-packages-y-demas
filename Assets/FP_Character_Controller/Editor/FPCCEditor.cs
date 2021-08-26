@@ -69,7 +69,7 @@ public class FPCCEditor : Editor
         EditorGUILayout.Space();
         GUI.DrawTexture(GUILayoutUtility.GetRect(20, 60), titleBanner, ScaleMode.ScaleToFit);
 
-        EditorGUILayout.LabelField("By Ignacio Settembrini", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("By Ignacio Settembrini        V 0.5", EditorStyles.boldLabel);
         EditorGUILayout.Space();
         EditorGUILayout.Space();
         BasicActions();

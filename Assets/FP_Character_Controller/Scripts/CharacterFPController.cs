@@ -155,18 +155,18 @@ public class CharacterFPController : MonoBehaviour
     #region Basic Actions
     private void Move()
     {
-        inputVec = (transform.forward * Input.GetAxis(_axisZInput) + transform.right * Input.GetAxis(_axisXInput)) * _movementSpeed * Time.deltaTime;
+        inputVec = transform.forward * Input.GetAxis(_axisZInput);
+        inputVec += transform.right * Input.GetAxis(_axisXInput);
+        inputVec.y = -transform.up.y;
 
-        this.inputVec.y = _rb.velocity.y;
-
-        if(inputVec.sqrMagnitude > 1)
+        if (inputVec.sqrMagnitude > 1)
         {
             inputVec.Normalize();
         }
 
-        if((inputVec.x != 0f || inputVec.z != 0f) && !stop && _canWalk)
+        if ((inputVec.x != 0f || inputVec.z != 0f) && !stop && _canWalk)
         {
-            _rb.velocity = inputVec;
+            _rb.velocity = inputVec * _movementSpeed * Time.deltaTime;
             _isWalking = true;
         }
         else
