@@ -157,7 +157,7 @@ public class CharacterFPController : MonoBehaviour
     {
         inputVec = transform.forward * Input.GetAxis(_axisZInput);
         inputVec += transform.right * Input.GetAxis(_axisXInput);
-        inputVec.y = -transform.up.y;
+        inputVec += transform.up * Physics.gravity.y * 3.5f * Time.deltaTime;
 
         if (inputVec.sqrMagnitude > 1)
         {
